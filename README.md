@@ -1,5 +1,5 @@
-How's Your WiFi
-===============
+How's My WiFi
+=============
 
 **HIGHLY EXPERIMENTAL BUT ALSO TOTALLY HARMLESS**
 
@@ -24,6 +24,18 @@ Perhaps Comcast is telling, for $100 a month you get "Up to 75Gbps"
 but what good is that if it turns out it hovers around 0.5Gbps most of
 the time?
 
+How To Install It
+-----------------
+
+With `npm`:
+
+    npm install howsmywifi
+
+With `yarn`:
+
+    yarn add howsmywifi
+
+
 What Does It Look Like?
 -----------------------
 
@@ -31,7 +43,7 @@ Like this:
 
 ![Screenshot](screenshot.png)
 
-Yeah, it ain't pretty. Neither in the code but it's a start.
+Yeah, it ain't pretty. Neither is the code, but it's a start.
 
 LICENSE
 -------

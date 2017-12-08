@@ -1,8 +1,12 @@
 {
   "name": "howsmywifi",
   "version": "1.0.0",
-  "description": "Measure (repeatedly) your broadband speed using Fast.com in a headless browser",
+  "description":
+    "Measure (repeatedly) your broadband speed using Fast.com in a headless browser",
   "main": "index.js",
+  "bin": {
+    "howsmywifi": "./index.js"
+  },
   "repository": "https://github.com/peterbe/howsmywifi",
   "author": "Peter Bengtsson",
   "license": "MIT",
