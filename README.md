@@ -11,9 +11,9 @@ of your connection to the Interwebs. The WiFi from your laptop to your
 router is unlikely to be the bottleneck so this ultimately measures your
 broadband.
 
-This is a NodeJS script that opens `https://fast.com` with a headless
-browser, hangs on till it gets a speed measurement. Then it records this
-number in a database.
+This is a NodeJS script that opens [Fast.com](https://fast.com), written
+by Netflix, with a headless browser, hangs on till it gets a
+speed measurement. Then it records this number in a local database.
 
 You run it like this:
 
