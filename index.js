@@ -134,7 +134,7 @@ const run = (db, options) => {
             log('Screenshot', result.screenshot)
           }
           const took = (t2 - t1) / 1000
-          log('Took', took.toFixed(2) + 's', '\n')
+          log('Took', took.toFixed(1) + 's', '\n')
         }
         return db.insert(
           'measurements',

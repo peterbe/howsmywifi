@@ -1,8 +1,6 @@
 How's My WiFi
 =============
 
-**HIGHLY EXPERIMENTAL BUT ALSO TOTALLY HARMLESS**
-
 **ONLY WORKS ON OSX AT THE MOMENT** [See Issue #1](https://github.com/peterbe/howsmywifi/issues/1)
 
 Measure (repeatedly) your broadband speed using Fast.com in a headless browser.
