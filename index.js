@@ -172,11 +172,11 @@ const formatSecondsAgo = secs => {
 
 const formatSpeed = mbps => {
   if (mbps < 1) {
-    return `${Math.floor(mbps / 1000)}Kbps`
+    return `${Math.floor(mbps / 1000)} Kbps`
   } else if (mbps > 1000) {
-    return `${(mbps / 1000).toFixed(1)}Gbps`
+    return `${(mbps / 1000).toFixed(1)} Gbps`
   } else {
-    return `${mbps.toFixed(1)}Mbps`
+    return `${mbps.toFixed(1)} Mbps`
   }
 }
 
@@ -207,7 +207,6 @@ const runScreen = db => {
             reject(err)
           }
 
-          const ssid = measurements[0].ssid
           const data = {
             // title: `SSID: ${ssid}`,
             // https://github.com/yaronn/blessed-contrib/issues/133
