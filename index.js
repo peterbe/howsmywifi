@@ -130,7 +130,7 @@ const run = (db, options) => {
         const speedValue = result ? result.speedValue : null
         if (speedValue) {
           log('speedValue', formatSpeed(result.speedValue))
-          if (options.screeshot) {
+          if (options.screenshot) {
             log('Screenshot', result.screenshot)
           }
           const took = (t2 - t1) / 1000
@@ -151,7 +151,6 @@ const run = (db, options) => {
         console.error(error)
         return error
       })
-
   })
 }
 
@@ -327,7 +326,8 @@ const argv = minimist(args, {
     help: 'h',
     version: 'v',
     sleepseconds: 't',
-    loop: 'l'
+    loop: 'l',
+    screenshots: 'screenshot'
   },
   unknown: param => {
     if (param.startsWith('-')) {
@@ -348,7 +348,7 @@ if (argv['help']) {
       'Available options:\n' +
       '  --loop or -l                  Run repeatedly (sleepseconds) and keep taking measurements.\n' +
       '  --sleepseconds or -t          Number of seconds to wait between runs (default 300).\n' +
-      '  --screenshots                 Save a screenshot for each load.\n' +
+      '  --screenshots                 Save a screenshot for each measurement.\n' +
       '  --version or -v               Print minimalcss version.\n' +
       ''
   )
@@ -356,12 +356,14 @@ if (argv['help']) {
 }
 
 const options = {
-  screenshot: false,
+  screenshot: argv['screenshots'],
   log: (...args) => {
     console.log(...args)
   }
 }
+
 const db = sqlite3Wrapper.open(DB_NAME)
+
 if (argv['report']) {
   // todo
 } else if (argv['loop']) {
@@ -388,7 +390,6 @@ if (argv['report']) {
       })
   }
   loop()
-
 } else {
   run(db, options)
 }
