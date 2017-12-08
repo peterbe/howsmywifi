@@ -3,6 +3,8 @@ How's My WiFi
 
 **HIGHLY EXPERIMENTAL BUT ALSO TOTALLY HARMLESS**
 
+**ONLY WORKS ON OSX AT THE MOMENT** [See Issue #1](https://github.com/peterbe/howsmywifi/issues/1)
+
 Measure (repeatedly) your broadband speed using Fast.com in a headless browser.
 
 Yes, WiFi isn't broadband and broadband isn't WiFi but ultimately, what
@@ -67,7 +69,15 @@ Basic operation is:
 
     ./node_modules/.bin/howsmywifi
 
-That will give you, after a couple of seconds, a speed value
+That will give you, after a couple of seconds, a speed value.
+The more interesting thing is to run it repeatedly so a moving average
+can tell you what your speed is:
+
+    ./node_modules/.bin/howsmywifi --loop
+
+Check out the other options with:
+
+    ./node_modules/.bin/howsmywifi --help
 
 
 What Does It Look Like?
