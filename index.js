@@ -9,7 +9,6 @@ const blessed = require('blessed')
 const contrib = require('blessed-contrib')
 const VERSION = require('./package.json').version
 const DB_NAME = './database.sqlite'
-// const db = sqlite3Wrapper.open(DB_NAME)
 
 const initDb = () => {
   const dbRaw = new sqlite3.Database(DB_NAME)
@@ -115,10 +114,11 @@ const fastCom = async options => {
 }
 
 const run = (db, options) => {
+  const log = options.log
   initDb()
   const t0 = new Date()
   return currentSSID().then(ssid => {
-    console.log('SSID:', ssid)
+    log('SSID:', ssid)
     const t1 = new Date()
     return fastCom(options)
       .then((result, error) => {
@@ -128,12 +128,12 @@ const run = (db, options) => {
         }
         const speedValue = result ? result.speedValue : null
         if (speedValue) {
-          console.log('speedValue', formatSpeed(result.speedValue))
+          log('speedValue', formatSpeed(result.speedValue))
           if (options.screeshot) {
-            console.log('Screenshot', result.screenshot)
+            log('Screenshot', result.screenshot)
           }
           const took = (t2 - t1) / 1000
-          console.log('Took', took.toFixed(2) + 's')
+          log('Took', took.toFixed(2) + 's', '\n')
         }
         return db.insert(
           'measurements',
@@ -148,11 +148,9 @@ const run = (db, options) => {
       })
       .catch(error => {
         console.error(error)
-        // throw error
         return error
       })
 
-    // console.log('speedValue', speedValue);
   })
 }
 
@@ -254,11 +252,6 @@ const runScreen = db => {
               movingAverage.y.unshift(sma3(measurement.speed))
             }
 
-            // if (measurement.speed) {
-            //   data.y.unshift(measurement.speed)
-            // } else {
-            //   data.y.unshift(0)
-            // }
             if (measurement.speed > maxY) {
               maxY = measurement.speed
             }
@@ -274,7 +267,6 @@ const runScreen = db => {
   }
   const screen = blessed.screen()
   const grid = new contrib.grid({ rows: 12, cols: 12, screen: screen })
-  // const gauge = grid.set(8, 10, 2, 2, contrib.gauge, {label: 'Speed', percent: [80,20]})
   const speedLine = grid.set(0, 6, 12, 6, contrib.line, {
     style: {
       line: 'red',
@@ -285,18 +277,20 @@ const runScreen = db => {
     maxY: 10,
     showLegend: true
   })
+  const log = grid.set(0, 0, 12, 6, contrib.log, {
+    fg: 'green',
+    selectedFg: 'green',
+    label: 'Log'
+  })
 
   let lastMaxID = null
   setInterval(() => {
-    getGraphData({limit: 30}).then(graphData => {
+    getGraphData({ limit: 30 }).then(graphData => {
       const { maxY, datum, maxID } = graphData
       if (!lastMaxID || maxID !== lastMaxID) {
         // the values have actually changed!
         speedLine.options.maxY = maxY
         speedLine.setData(datum)
-        // datum.forEach(data => {
-        //   speedLine.setData(data)
-        // })
         lastMaxID = maxID
       }
     })
@@ -309,25 +303,15 @@ const runScreen = db => {
 
   // fixes https://github.com/yaronn/blessed-contrib/issues/10
   screen.on('resize', function() {
-    // donut.emit('attach');
     speedLine.emit('attach')
-    // gauge_two.emit('attach');
-    // sparkline.emit('attach');
-    // bar.emit('attach');
-    // table.emit('attach');
-    // lcdLineOne.emit('attach');
-    // errorsLine.emit('attach');
-    // transactionsLine.emit('attach');
-    // map.emit('attach');
-    // log.emit('attach');
+    log.emit('attach')
   })
 
   screen.render()
+
+  // leak this so it can be written to
+  return log
 }
-// const updateGauge = () => {
-//   setLineData([errorsData], errorsLine)
-//
-// }
 
 const args = process.argv.slice(2)
 
@@ -337,8 +321,6 @@ const argv = minimist(args, {
   string: ['output', 'skip'],
   default: {
     sleepseconds: 60 * 5
-    // color: true,
-    // "ignore-path": ".prettierignore"
   },
   alias: {
     help: 'h',
@@ -373,12 +355,22 @@ if (argv['help']) {
 }
 
 const options = {
-  screenshot: false
+  screenshot: false,
+  log: (...args) => {
+    console.log(...args)
+  }
 }
 const db = sqlite3Wrapper.open(DB_NAME)
 if (argv['report']) {
   // todo
 } else if (argv['loop']) {
+  if (!argv['noloopgui']) {
+    const log = runScreen(db)
+    log.log('Starting up...')
+    options.log = (...args) => {
+      log.log(args.join(' '))
+    }
+  }
   const interval = argv['sleepseconds'] * 1000
   // The reason for using setTimeout instead of setInterval is that we
   // want to sleep AFTER the run() function has FINISHED.
@@ -388,6 +380,7 @@ if (argv['report']) {
         setTimeout(loop, interval)
       })
       .catch(err => {
+        // throw err
         console.log('Run failed. Better luck next time')
         console.log(err.toString())
         setTimeout(loop, interval)
@@ -395,13 +388,6 @@ if (argv['report']) {
   }
   loop()
 
-  if (!argv['noloopgui']) {
-    runScreen(db)
-  }
-  // run(options)
-  // setInterval(() => {
-  //   run(options)
-  // }, interval)
 } else {
   run(db, options)
 }

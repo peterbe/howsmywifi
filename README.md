@@ -24,6 +24,14 @@ Perhaps Comcast is telling, for $100 a month you get "Up to 75Gbps"
 but what good is that if it turns out it hovers around 0.5Gbps most of
 the time?
 
+What Does It Look Like?
+-----------------------
+
+Like this:
+
+![Screenshot](screenshot.png)
+
+Yeah, it ain't pretty. Neither in the code but it's a start.
 
 LICENSE
 -------
