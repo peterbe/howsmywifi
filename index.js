@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const fs = require('fs')
 const wifi = require('node-wifi')
 const { spawn } = require('child_process')
