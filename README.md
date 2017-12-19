@@ -13,9 +13,17 @@ This is a NodeJS script that opens [Fast.com](https://fast.com), written
 by Netflix, with a headless browser, hangs on till it gets a
 speed measurement. Then it records this number in a local database.
 
-You run it like this:
+You run it like this (if you installed it globally):
 
-    node index.js
+    howsmywifi
+
+Running it once is about as useful as opening a browser tab to https://fast.com.
+To really get your money's worth, loop it like this:
+
+    howsmywifi --loop
+
+...then wait. Let it run for a couple of minutes and bask in the glorious
+line chart that indicates your Internet Flash Gordonness.
 
 The goal is to comprehend how your Internet speed is fluctuating.
 Perhaps Comcast is telling, for $100 a month you get "Up to 75Gbps"
@@ -53,7 +61,7 @@ Or, globally, with `npm`:
 
     npm install -g howsmywifi
 
-Or, globally, with `yarn`:
+Or, globally, with `yarn` (recommanded):
 
     yarn global add howsmywifi
 
