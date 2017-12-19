@@ -9,10 +9,21 @@ const minimist = require('minimist')
 const blessed = require('blessed')
 const contrib = require('blessed-contrib')
 const VERSION = require('./package.json').version
-const DB_NAME = './database.sqlite'
+const OLD_DB_NAME = './database.sqlite'
+const DB_NAME = './howsmywifi.sqlite'
+
+let active_db_name = DB_NAME
+// When the project was first release the sqlite db file name
+// was generic and it was impossible to know what that file
+// represented. The new name is better. But for the sake of
+// legacy, only use the new name if the old name hasn't been
+// used.
+if (fs.existsSync(OLD_DB_NAME) && !fs.existsSync(DB_NAME)) {
+  active_db = OLD_DB_NAME
+}
 
 const initDb = () => {
-  const dbRaw = new sqlite3.Database(DB_NAME)
+  const dbRaw = new sqlite3.Database(active_db_name)
   dbRaw.serialize(function() {
     dbRaw.run(`
       CREATE TABLE IF NOT EXISTS measurements
@@ -361,7 +372,7 @@ const options = {
   }
 }
 
-const db = sqlite3Wrapper.open(DB_NAME)
+const db = sqlite3Wrapper.open(active_db_name)
 
 if (argv['report']) {
   // todo
