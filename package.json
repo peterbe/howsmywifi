@@ -1,6 +1,6 @@
 {
   "name": "howsmywifi",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Measure (repeatedly) your broadband speed using Fast.com in a headless browser",
   "main": "index.js",
   "bin": {
