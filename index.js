@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs')
 const wifi = require('node-wifi')
-const { spawn } = require('child_process')
 const puppeteer = require('puppeteer')
 const sqlite3Wrapper = require('sqlite3-wrapper')
 const sqlite3 = require('sqlite3').verbose()
@@ -38,44 +37,12 @@ const initDb = () => {
   dbRaw.close()
 }
 
-const OSX_AIRPORT_PATH =
-  '/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
 const currentSSID = () => {
-  // wifi.init({
-  //     iface : null // network interface, choose a random wifi interface if set to null
-  // });
-  //
-  // wifi.getCurrentConnections(function(err, currentConnections) {
-  //   if (err) {
-  //     console.error(err);
-  //     throw err
-  //     // console.log(err)
-  //   }
-  //   console.log('CURRENT CONNETIONS');
-  //   console.log(currentConnections)
-  // })
-  return new Promise((resolve, reject) => {
-    const airport = spawn(OSX_AIRPORT_PATH, ['-I'])
-    airport.stderr.on('data', data => {
-      reject(data.toString())
-    })
-    airport.stdout.on('data', data => {
-      const ssids = data
-        .toString()
-        .split('\n')
-        .filter(line => {
-          return line.search(/\bSSID:/) > -1
-        })
-        .map(line => {
-          return line.split(':')[1].trim()
-        })
-      if (ssids.length) {
-        resolve(ssids[0])
-      } else {
-        reject('No SSID found')
-      }
-    })
+  wifi.init({
+    iface: null // network interface, choose a random wifi interface if set to null
   })
+
+  return wifi.getCurrentConnections().then(wifi => wifi[0].ssid)
 }
 
 const fastCom = async options => {
@@ -129,40 +96,44 @@ const run = (db, options) => {
   const log = options.log
   initDb()
   const t0 = new Date()
-  return currentSSID().then(ssid => {
-    log('SSID:', ssid)
-    const t1 = new Date()
-    return fastCom(options)
-      .then((result, error) => {
-        const t2 = new Date()
-        if (error) {
-          console.warn('WARNING:', error)
-        }
-        const speedValue = result ? result.speedValue : null
-        if (speedValue) {
-          log('speedValue', formatSpeed(result.speedValue))
-          if (options.screenshot) {
-            log('Screenshot', result.screenshot)
+  return currentSSID()
+    .then(ssid => {
+      log('SSID:', ssid)
+      const t1 = new Date()
+      return fastCom(options)
+        .then((result, error) => {
+          const t2 = new Date()
+          if (error) {
+            console.warn('WARNING:', error)
           }
-          const took = (t2 - t1) / 1000
-          log('Took', took.toFixed(1) + 's', '\n')
-        }
-        return db.insert(
-          'measurements',
-          { speed: speedValue, date: new Date(), ssid: ssid },
-          (error, id) => {
-            if (error) {
-              throw error
+          const speedValue = result ? result.speedValue : null
+          if (speedValue) {
+            log('speedValue', formatSpeed(result.speedValue))
+            if (options.screenshot) {
+              log('Screenshot', result.screenshot)
             }
-            // console.log('Row inserted')
+            const took = (t2 - t1) / 1000
+            log('Took', took.toFixed(1) + 's', '\n')
           }
-        )
-      })
-      .catch(error => {
-        console.error(error)
-        return error
-      })
-  })
+          return db.insert(
+            'measurements',
+            { speed: speedValue, date: new Date(), ssid: ssid },
+            (error, id) => {
+              if (error) {
+                throw error
+              }
+              // console.log('Row inserted')
+            }
+          )
+        })
+        .catch(error => {
+          console.error(error)
+          return error
+        })
+    })
+    .catch(err => {
+      throw err
+    })
 }
 
 const formatSecondsAgo = secs => {

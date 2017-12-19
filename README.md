@@ -1,8 +1,6 @@
 How's My WiFi
 =============
 
-**ONLY WORKS ON OSX AT THE MOMENT** [See Issue #1](https://github.com/peterbe/howsmywifi/issues/1)
-
 Measure (repeatedly) your broadband speed using Fast.com in a headless browser.
 
 Yes, WiFi isn't broadband and broadband isn't WiFi but ultimately, what
