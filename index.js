@@ -330,7 +330,7 @@ const argv = minimist(args, {
   integer: ['sleepseconds'],
   string: ['output', 'skip'],
   default: {
-    sleepseconds: 10
+    sleepseconds: 30
   },
   alias: {
     help: 'h',
